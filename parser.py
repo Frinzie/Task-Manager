@@ -1,5 +1,6 @@
-doc_string = """Module that provides a parser function which takes a string
+"""Module that provides a parser function which takes a string
 and returns a dictionary with the note, tags, date, reminders and errors"""
+from task import Task
 
 
 def parser(text: str):
@@ -10,11 +11,11 @@ def parser(text: str):
             tags.append(word[1:])
             continue
         note += word + " "
-    return {"note": note.strip(), "tags": tags}
+    return Task(note=note, tags=tags)
 
 
 if __name__ == "__main__":
-    print(doc_string)
+    print(__doc__)
     inp = None
     while 1:
         inp = input()

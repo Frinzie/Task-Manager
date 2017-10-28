@@ -18,5 +18,6 @@ if __name__ == "__main__":
     inp = None
     while 1:
         inp = input()
-        if inp == "quit()": break
+        if inp == "quit()":
+            break
         print(parser(inp))

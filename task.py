@@ -2,7 +2,8 @@
 
 
 class Task:
-    def __init__(self, note: str, tags=[], date=None, reminders=[], errors=[]):
+    def __init__(self, note: str, tags=set(), date=None, reminders=[],
+                 errors=[]):
         self.note = note
         self.tags = tags
         self.date = date

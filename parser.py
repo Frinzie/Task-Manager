@@ -6,7 +6,7 @@ from dateutil.rrule import *
 
 abbreviations = {
     "monday": MO, "mon": MO, "mo": MO,
-    "tuesday": TU, "tue": TU, "tu": MO,
+    "tuesday": TU, "tue": TU, "tu": TU,
     "wednesday": WE, "wed": WE, "we": WE,
     "thursday": TH, "thu": TH, "th": TH,
     "friday": FR, "fri": FR, "fr": FR,

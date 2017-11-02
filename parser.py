@@ -18,7 +18,8 @@ abbreviations = {
 error_messages = {"!!ERROR": "Incorrect format; consult the docs",
                   "DMERROR": "Incorrect format; consult the docs",
                   "WPERROR": "Incorrect format; consult the docs",
-                  "HMERROR": "Incorrect format; consult the docs"}
+                  "HMERROR": "Incorrect format; consult the docs",
+                  "!ERROR": "Incorrect format; consult the docs"}
 
 
 def parser(text: str):
@@ -47,6 +48,8 @@ def parser(text: str):
             minutes = None
             if len(word_parts) > 2:
                 errors.append((word, error_messages["WPERROR"]))
+            elif all(not w.isdigit() for w in word_parts):
+                errors.append((word, error_messages["!ERROR"]))
             else:
                 # Handles the DDMM part
                 if len(word_parts[0]) in (1, 2):
@@ -56,6 +59,8 @@ def parser(text: str):
                     month = int(word_parts[0][2:])
                 else:
                     errors.append((word, error_messages["DMERROR"]))
+                    note += word + " "
+                    continue
                 # Handles the HHMM part (if needed)
                 # if len(word_parts) == 2:
                 #     if len(word_parts[1]) in (1, 2):

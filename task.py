@@ -3,7 +3,7 @@
 
 class Task:
     def __init__(self, note: str, tags=set(), date=None, reminders=[],
-                 errors=[]):
+                 errors=[], whole_day=True):
         self.note = note
         self.tags = tags
         self.date = date

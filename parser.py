@@ -21,7 +21,9 @@ error_messages = {"!!ERROR": "Incorrect format; consult the docs",
                   "HMERROR": "Incorrect format; consult the docs",
                   "!ERROR": "Incorrect format; consult the docs",
                   "DRANGEERROR": "Incorrect format; consult the docs",
-                  "MRANGEERROR": "Incorrect format; consult the docs"}
+                  "MRANGEERROR": "Incorrect format; consult the docs",
+                  "HRANGEERROR": "Incorrect format; consult the docs",
+                  "MiRANGEERROR": "Incorrect format; consult the docs"}
 
 day_ranges = {1: range(1, 32), 2: range(1, 30), 3: range(1, 32),
               4: range(1, 31), 5: range(1, 32), 6: range(1, 31),
@@ -54,9 +56,10 @@ def parser(text: str):
             day = None
             hour = None
             minutes = None
+            whole_day = True
             if len(word_parts) > 2:
                 errors.append((word, error_messages["WPERROR"]))
-            elif all(not w.isdigit() for w in word_parts):
+            elif any(not w.isdigit() and w for w in word_parts):
                 errors.append((word, error_messages["!ERROR"]))
             else:
                 # Handles the DDMM part
@@ -77,28 +80,48 @@ def parser(text: str):
                         errors.append((word, error_messages["DRANGEERROR"]))
                         note += word + " "
                         continue
+                elif not word_parts[0]:
+                    pass
                 else:
                     errors.append((word, error_messages["DMERROR"]))
                     note += word + " "
                     continue
                 # Handles the HHMM part (if needed)
-                # if len(word_parts) == 2:
-                #     if len(word_parts[1]) in (1, 2):
-                #         hour = int(word_parts[1])
-                #     elif len(word_parts[0]) == 4:
-                #         hour = int(word_parts[1][:2])
-                #         minutes = int(word_parts[1][2:])
-                #     else:
-                #         errors.append((word, error_messages["HMERROR"]))
-                #     date_start = dt.datetime.now()
-                # else:
-                date_start = dt.date.today()
+                if len(word_parts) == 2:
+                    if len(word_parts[1]) in (1, 2):
+                        hour = int(word_parts[1])
+                        minutes = 0
+                    elif len(word_parts[1]) == 4:
+                        hour = int(word_parts[1][:2])
+                        minutes = int(word_parts[1][2:])
+                    else:
+                        errors.append((word, error_messages["HMERROR"]))
+                        note += word + " "
+                        continue
+
+                    if hour not in range(0, 24):
+                        errors.append((word,
+                                       error_messages["HRANGEERROR"]))
+                        note += word + " "
+                        continue
+                    elif minutes not in range(0, 60):
+                        errors.append((word,
+                                       error_messages["MiRANGEERROR"]))
+                        note += word + " "
+                        continue
+
+                    date_start = dt.datetime.now() + dt.timedelta(minutes=1)
+                    whole_day = False
+                else:
+                    date_start = dt.date.today() + dt.timedelta(days=1)
                 date = rrule(DAILY, dtstart=date_start, bymonth=month,
-                             bymonthday=day, byhour=hour, byminute=minutes)[0]
+                             bymonthday=day, byhour=hour, byminute=minutes,
+                             bysecond=0)[0]
                 continue
 
         note += word + " "
-    return Task(note=note.strip(), tags=tags, date=date, errors=errors)
+    return Task(note=note.strip(), tags=tags, date=date, errors=errors,
+                whole_day=whole_day)
 
 
 if __name__ == "__main__":

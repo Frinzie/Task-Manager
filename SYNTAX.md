@@ -1,3 +1,5 @@
+#### WARNING: THIS FILE IS OUTDATED AND MIGHT NOT BE FULLY ACCURATE
+
 #### 1. Notes (plain text)
 Math test
 
